@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Merchant Dashboard</h1>
+<p>Welcome, {{ merchant.username }}</p>
+<a href="{{ url_for('scan_qr') }}">Scan QR Code</a>
+{% endblock %}

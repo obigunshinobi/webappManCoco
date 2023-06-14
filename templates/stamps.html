@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Your Stamps</h1>
+
+<div class="row">
+    {% for i in range(1, 11) %}
+    <div class="col-sm-4">
+        <div class="card">
+            {% if stamps[i-1] %}
+            <div class="card-body">
+                <h5 class="card-title">Stamp {{ stamps[i-1].id }}</h5>
+                <p class="card-text">You've collected this stamp!</p>
+            </div>
+            {% else %}
+            <div class="card-body">
+                <h5 class="card-title">Empty</h5>
+                <p class="card-text">You haven't collected this stamp yet.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% if i == 10 %}
+    <div class="col-sm-4">
+        <div class="card bg-warning">
+            <div class="card-body">
+                <h5 class="card-title">Reward</h5>
+                <p class="card-text">This is your reward for collecting 10 stamps!</p>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    {% endfor %}
+</div>
+{% endblock %}
