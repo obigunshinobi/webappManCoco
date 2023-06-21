@@ -1,0 +1,6 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Scan this QR code to collect a stamp</h1>
+<img src="data:image/png;base64,{{ qr_code }}" alt="QR Code for collecting a stamp">
+{% endblock %}

@@ -41,6 +41,7 @@
     <Content Include="templates\admin.html" />
     <Content Include="templates\base.html" />
     <Content Include="templates\error.html" />
+    <Content Include="templates\generate_qr.html" />
     <Content Include="templates\home.html" />
     <Content Include="templates\login.html" />
     <Content Include="templates\merchant.html" />
