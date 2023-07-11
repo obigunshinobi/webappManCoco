@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Welcome, {{ current_user.username }}!</h1>
+
+<div class="row">
+    <div class="col-md-6">
+        <h2>Your Stamps</h2>
+        <div class="row">
+            {% for i in range(1, 11) %}
+            <div class="col-md-2">
+                {% if stamps|length >= i %}
+                <div class="stamp-collected">
+                    Stamp {{ i }}: Collected
+                </div>
+                {% else %}
+                <div class="stamp-not-collected">
+                    Stamp {{ i }}: Not collected
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <h2>Add a Stamp</h2>
+        <a href="{{ url_for('generate_qr') }}" class="btn btn-primary">Generate QR Code</a>
+
+        {% if current_user.reward_redeemed %}
+        <h2>Reward Available</h2>
+        <a href="{{ url_for('generate_reward_qr') }}" class="btn btn-success">Redeem Reward</a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

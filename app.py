@@ -7,6 +7,7 @@ from io import BytesIO
 from flask_login import login_required, current_user, LoginManager, login_user, logout_user
 from flask_login import UserMixin
 import base64
+import random
 
 
 
@@ -32,10 +33,14 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(64), index=True, unique=True)
     stamps = db.relationship('Stamp', backref='user', lazy='dynamic')
     is_merchant = db.Column(db.Boolean)
+    reward_redeemed = db.Column(db.Boolean, default=False)
+    stamp_counter = db.Column(db.Integer, default=0)
 
 class Stamp(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    collected = db.Column(db.Boolean, default=False)
+    series = db.Column(db.Integer, default=1)
 
     # Add any other fields you want for the stamp
 
@@ -65,13 +70,12 @@ def register():
         user = User.query.filter_by(username=username).first()
         if user is None:
             # The username is available, so create a new user
-            user = User(username=username)
+            user = User(username=username, stamp_counter=0)  # explicitly set stamp_counter to 0
             db.session.add(user)
             db.session.commit()
             flash('Registered successfully!')  # Flash a success message
             return redirect(url_for('home'))  # Redirect to the home page after successful registration
         else:
-
             return "Username is already taken"
     else:
         # render the registration page
@@ -83,32 +87,60 @@ def register():
 @login_required
 def stamps():
     # This is just a placeholder - you'll need to get the actual current user's ID
-    current_user_id = 1
-    stamps = Stamp.query.filter_by(user_id=current_user_id).all()
-    return render_template('stamps.html', stamps=stamps)
+    stamp_counter = current_user.stamp_counter
+    return render_template('stamps.html', stamp_counter=stamp_counter)
 
 @app.route('/add_stamp', methods=['GET', 'POST'])
 def add_stamp():
     if request.method == 'POST':
-        # This is just a placeholder - you'll need to get the actual current user's ID
-        current_user_id = 1
-        stamp = Stamp(user_id=current_user_id)
-        db.session.add(stamp)
+        # Here you'd normally create a new stamp in your database
+        # and get an ID for it. For this example, we'll just use a random number.
+        stamp_id = random.randint(1000, 9999)
+
+        # Create a new stamp and add it to the database
+        new_stamp = Stamp(id=stamp_id, user_id=current_user.id)
+        db.session.add(new_stamp)
         db.session.commit()
-        return "Added a stamp!"
+
+        qr = qrcode.QRCode(
+            version=1,
+            error_correction=qrcode.constants.ERROR_CORRECT_L,
+            box_size=10,
+            border=4,
+        )
+        qr.add_data(stamp_id)
+        qr.make(fit=True)
+
+        img = qr.make_image(fill_color="orange", back_color="#1f2951")
+
+        buffered = BytesIO()
+        img.save(buffered, format="PNG")
+        img_str = base64.b64encode(buffered.getvalue()).decode()
+
+        # Pass the base64 string to the template
+        return render_template('add_stamp.html', img_data=img_str)
     else:
         return render_template('add_stamp.html')
 
-@app.route('/generate_qr/<int:stamp_id>')
+@app.route('/generate_qr/', defaults={'stamp_id': None})
+@app.route('/generate_qr/<stamp_id>')
+@login_required
 def generate_qr(stamp_id):
     # Get the stamp
-    stamp = Stamp.query.get(stamp_id)
-    if stamp is None:
-        return "Stamp not found", 404
+    if stamp_id is None:
+        # If no stamp_id is provided, create a new stamp
+        stamp = Stamp.query.filter_by(user_id=current_user.id, collected=False).first()
+        if stamp is None:
+            stamp = Stamp(user_id=current_user.id, collected=False)
+            db.session.add(stamp)
+            db.session.commit()
+    else:
+        stamp = Stamp.query.get(stamp_id)
+        if stamp is None:
+            return "Stamp not found", 404
 
     # Check if the logged-in user is the owner of the stamp
-    current_user_id = 1  # replace this with the actual current user's ID
-    if stamp.user_id != current_user_id:
+    if stamp.user_id != current_user.id:
         return "Access denied", 403
 
     # Generate a QR code with the stamp ID
@@ -118,16 +150,21 @@ def generate_qr(stamp_id):
         box_size=10,
         border=4,
     )
-    qr.add_data(stamp_id)
+    qr_data = f"{stamp.id}-{current_user.id}"
+    qr.add_data(qr_data)
     qr.make(fit=True)
+
+    print(f"Generated QR code with data: {qr_data}")
 
     img = qr.make_image(fill='black', back_color='white')
 
-    # Convert the image to a response
-    byte_io = BytesIO()
-    img.save(byte_io, 'PNG')
-    byte_io.seek(0)
-    return send_file(byte_io, mimetype='image/png')
+    # Convert the image to a base64 string
+    buffered = BytesIO()
+    img.save(buffered, format="PNG")
+    img_str = base64.b64encode(buffered.getvalue()).decode()
+
+    return render_template('generate_qr.html', qr_code=img_str)
+
 
 @app.route('/scan_qr', methods=['GET'])
 @login_required
@@ -136,24 +173,53 @@ def scan_qr():
         return redirect(url_for('error'))  # Redirect non-merchant users to the error page
     return render_template('scan.html')  # Render the page with a QR code scanner
 
+@app.route('/validate_reward', methods=['POST'])
+def validate_reward():
+    user_id = request.form.get('user_id')
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({'error': 'User not found'}), 404
+    user.reward_redeemed = False
+    user.stamp_counter = 0
+    db.session.commit()
+    return jsonify({'message': 'Reward redeemed successfully'}), 200
 
-@app.route('/validate_stamp/<int:stamp_id>', methods=['POST'])
-def validate_stamp(stamp_id):
+@app.route('/validate_stamp/<int:stamp_id>-<int:user_id>', methods=['POST'])
+def validate_stamp(stamp_id, user_id):
+    # Look up the stamp by ID
     stamp = Stamp.query.get(stamp_id)
+
     if stamp is None:
-        return "Stamp not found", 404
+        # The stamp doesn't exist
+        return 'Stamp not found', 404
 
-    # Check if the logged-in user is a merchant
-    current_user_id = 1  # replace this with the actual current user's ID
-    user = User.query.get(current_user_id)
-    if user is None or not user.is_merchant:
-        return "Access denied", 403
+    if stamp.collected:
+        # The stamp has already been collected
+        return 'Stamp already collected', 409
 
-    # Validate the stamp
-    stamp.valid = True
+    # Check if the provided user_id matches the stamp's user_id
+    if user_id is not None and user_id != stamp.user_id:
+        return 'Incorrect user ID', 403
+
+    # Validate and collect the stamp
+    stamp.collected = True
+
+    # Increment the user's stamp counter
+    user = User.query.get(user_id)
+    if user is None:
+        return 'User not found', 404
+
+    user.stamp_counter += 1
+
+    # Check if the user has collected enough stamps for a reward
+    if user.stamp_counter >= 10:
+        user.reward_redeemed = True
+
     db.session.commit()
 
-    return "Stamp validated"
+    return 'Stamp collected', 200
+
+
 
 @app.route('/error')
 def error():
@@ -187,28 +253,34 @@ def admin():
 @app.route('/')
 @login_required
 def home():
-    # Get the current user's stamps
-    stamps = Stamp.query.filter_by(user_id=current_user.id).all()
+    if current_user.is_merchant:
+        return render_template('merchant.html', merchant=current_user)
+    else:
+        # Get the current user's collected stamps
+        stamp_counter = current_user.stamp_counter
 
-    # Create a QR code for adding a new stamp
-    qr = qrcode.QRCode(
-        version=1,
-        error_correction=qrcode.constants.ERROR_CORRECT_L,
-        box_size=10,
-        border=4,
-    )
-    qr.add_data(url_for('add_stamp', _external=True))
+        # Pass the stamps to the template
+        return render_template('home.html', stamp_counter=stamp_counter)
+
+
+@app.route('/generate_reward_qr')
+@login_required
+def generate_reward_qr():
+    # generate a different qr code for reward
+    qr_code = create_reward_qr_code(current_user.id)
+    return render_template('generate_reward_qr.html', qr_code=qr_code)
+
+def create_reward_qr_code(user_id):
+    # you can decide the data format for your qr code, for example:
+    data = f'reward:{user_id}'
+    qr = qrcode.QRCode(version=1, error_correction=qrcode.constants.ERROR_CORRECT_H, box_size=10, border=4)
+    qr.add_data(data)
     qr.make(fit=True)
-
     img = qr.make_image(fill='black', back_color='white')
-
-    # Convert the image to a byte array so it can be displayed in the template
-    byte_io = BytesIO()
-    img.save(byte_io, 'PNG')
-    byte_io.seek(0)
-    qr_code_image = base64.b64encode(byte_io.getvalue()).decode('ascii')
-
-    return render_template('home.html', stamps=stamps, qr_code_image=qr_code_image)
+    buffered = BytesIO()
+    img.save(buffered, format="PNG")
+    img_str = base64.b64encode(buffered.getvalue()).decode()
+    return img_str
 
 @app.route('/debug')
 def debug():
@@ -231,5 +303,4 @@ def logout():
 
 
 if __name__ == '__main__':
-    app.run(debug=True, ssl_context=('key.pem','cert.pem'))
-
+    app.run(debug=True, ssl_context='adhoc')

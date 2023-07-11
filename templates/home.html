@@ -1,31 +1,99 @@
-{% extends 'base.html' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <title>Stamps</title>
+    <script>
+        var stampCounter = "{{ stamp_counter }}";
+    </script>
+</head>
+<body>
 
-{% block content %}
-<h1>Welcome, {{ current_user.username }}!</h1>
 
-<div class="row">
-    <div class="col-md-6">
-        <h2>Your Stamps</h2>
+
+
+
+    <div class="logo">
+        <img src="{{ url_for('static', filename='imgs/mancoco_logo.svg') }}" alt="Logo">
+    </div>
+
+<div class="stamp">
+<img src="{{ url_for('static', filename='/imgs/mancoco_orange.svg') }}" alt="">
+        <img class="mirror" src="{{ url_for('static', filename='/imgs/mancoco_orange.svg') }}" alt="">
+    <div class="border">
+
+
+
+    <div class="card">
         <div class="row">
-            {% for i in range(1, 11) %}
-            <div class="col-md-2">
-                {% if stamps|length >= i %}
-                <div class="stamp-collected">
-                    Stamp {{ i }}: Collected
-                </div>
-                {% else %}
-                <div class="stamp-not-collected">
-                    Stamp {{ i }}: Not collected
-                </div>
-                {% endif %}
-            </div>
-            {% endfor %}
+            <div class="circle empty-circle" id="s1"><img src="{{ url_for('static', filename='/imgs/stamp-logo.png') }}" alt=""></div>
+            <div class="circle empty-circle" id="s2"><img src="{{ url_for('static', filename='/imgs/stamp-logo.png') }}" alt=""></div>
+            <div class="circle empty-circle" id="s3" ><img src="{{ url_for('static', filename='/imgs/stamp-logo.png') }}" alt=""></div>
+            <div class="circle empty-circle" id="s4" ><img src="{{ url_for('static', filename='/imgs/stamp-logo.png') }}" alt=""></div>
+            <div class="circle empty-circle " id="s5" ><img src="{{ url_for('static', filename='/imgs/stamp-logo.png') }}" alt=""></div> 
+        </div>
+        
+        <div class="row">
+            <div class="circle empty-circle" id="s6"><img src="{{ url_for('static', filename='/imgs/stamp-logo.png') }}" alt=""></div>
+            <div class="circle empty-circle " id="s7"><img src="{{ url_for('static', filename='/imgs/stamp-logo.png') }}" alt=""></div>
+            <div class="circle empty-circle" id="s8"><img src="{{ url_for('static', filename='/imgs/stamp-logo.png') }}" alt=""></div>
+            <div class="circle empty-circle" id="s9"><img src="{{ url_for('static', filename='/imgs/stamp-logo.png') }}" alt=""></div>
+            <div class="circle" id="free"><p>FREE</p></div>
         </div>
     </div>
+    <p class="msg">BUY 9 COFFEES GET A <span>10TH FREE</span></p>
 
-    <div class="col-md-6">
-        <h2>Add a Stamp</h2>
-        <img src="data:image/png;base64,{{ qr_code_image }}" alt="QR Code for adding a stamp">
+
+    <a href="{{ url_for('generate_qr')}}" class="qr" id="qrlink">Scan QR Code</a>
+
     </div>
 </div>
-{% endblock %}
+
+
+
+<script>
+    // Function to handle QR code scanning
+    function handleQRCodeScan() {
+        // Loop through the IDs from s1 to s9
+        for (let i = 1; i <= stampCounter; i++) {
+            // Get the ID of the current circle
+            const circleId = 's' + i;
+
+            // Check if the circle ID exists
+            if (document.getElementById(circleId)) {
+                // Get the current circle element
+                const circle = document.getElementById(circleId);
+
+                // Check if the circle is empty
+                if (circle.classList.contains('empty-circle')) {
+                    // Add a class to hide the default image
+                    circle.classList.add('hidden-image');
+
+                    // Remove the "empty-circle" class
+                    circle.classList.remove('empty-circle');
+
+                    // Show the image by changing its display style
+                    const image = circle.querySelector('img');
+                    image.style.display = 'block';
+
+                    // Do not exit the loop, let it fill all the stamps based on stampCounter
+                }
+            }
+        }
+
+        // Check if all the circles are filled
+        const emptyCircles = document.querySelectorAll('.empty-circle');
+        if (emptyCircles.length === 0) {
+            // Hide the QR code link
+            qrLink.style.display = 'none';
+        }
+    }
+
+    // Call the handleQRCodeScan function when a QR code is scanned
+    window.onload = handleQRCodeScan;
+</script>
+</body>
+</html>

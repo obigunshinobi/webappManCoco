@@ -31,23 +31,36 @@
     <Folder Include="old\" />
     <Folder Include="static\" />
     <Folder Include="static\js\" />
+    <Folder Include="static\css\" />
     <Folder Include="templates\" />
+    <Folder Include="static\imgs\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="old\login.html" />
     <Content Include="old\register.html" />
+    <Content Include="static\imgs\icons8-facebook-48.png" />
+    <Content Include="static\imgs\icons8-google-48.png" />
+    <Content Include="static\imgs\mancoco_backtile.svg" />
+    <Content Include="static\imgs\mancoco_head.svg" />
+    <Content Include="static\imgs\mancoco_logo.svg" />
+    <Content Include="static\imgs\mancoco_orange.svg" />
     <Content Include="static\js\scanner.js" />
     <Content Include="templates\add_stamp.html" />
     <Content Include="templates\admin.html" />
     <Content Include="templates\base.html" />
     <Content Include="templates\error.html" />
+    <Content Include="templates\generate_qr.html" />
+    <Content Include="templates\generate_reward_qr.html" />
     <Content Include="templates\home.html" />
+    <Content Include="templates\homeV1.html" />
     <Content Include="templates\login.html" />
     <Content Include="templates\merchant.html" />
     <Content Include="templates\profile.html" />
     <Content Include="templates\register.html" />
     <Content Include="templates\scan.html" />
+    <Content Include="static\imgs\stamp-logo.png" />
     <Content Include="templates\stamps.html" />
+    <Content Include="static\css\style.css" />
     <Content Include="templates\success.html" />
   </ItemGroup>
   <ItemGroup>
