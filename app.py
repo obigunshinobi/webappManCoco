@@ -14,25 +14,21 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-with open('render.yaml') as file:
-    config = yaml.full_load(file)
 
 app = Flask(__name__)
-
-app.config.update(config)
-
-print(app.config['SECRET_KEY'])
 
 #app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI')
 #app.config['SECRET_KEY'] = '123456789'  # Add this line
 
-
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI')
+'''
 if os.getenv('FLASK_ENV') == 'production':
    app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI')
 else:
    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////app.db'
    app.config['SECRET_KEY'] = '123456789'
-
+'''
 print(app.config['SQLALCHEMY_DATABASE_URI']) 
 
 db = SQLAlchemy(app)
