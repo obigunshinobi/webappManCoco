@@ -17,11 +17,12 @@ load_dotenv()
 
 app = Flask(__name__)
 
-#app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI')
-#app.config['SECRET_KEY'] = '123456789'  # Add this line
-
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://mancoco_user:54Eufi6PzCZnEsSIrrlumTXaYEH1Xi28@dpg-citjerp5rnuhcnp6cbk0-a/mancoco'
+app.config['SECRET_KEY'] = '123456789'  # Add this line
+'''
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI')
+'''
 '''
 if os.getenv('FLASK_ENV') == 'production':
    app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI')
