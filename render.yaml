@@ -17,7 +17,7 @@ services:
         value: 0
         
       - key: SECRET_KEY
-        value: 123456789
+        value: '123456789'
 
       - key: SQLALCHEMY_DATABASE_URI 
         value: postgres://mancoco_user:54Eufi6PzCZnEsSIrrlumTXaYEH1Xi28@dpg-citjerp5rnuhcnp6cbk0-a/mancoco
