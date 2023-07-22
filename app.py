@@ -33,6 +33,7 @@ else:
    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////app.db'
    app.config['SECRET_KEY'] = '123456789'
 
+print(app.config['SQLALCHEMY_DATABASE_URI']) 
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
