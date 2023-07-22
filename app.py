@@ -17,7 +17,7 @@ load_dotenv()
 
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://mancoco_user:54Eufi6PzCZnEsSIrrlumTXaYEH1Xi28@dpg-citjerp5rnuhcnp6cbk0-a/mancoco'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://mancoco_user:54Eufi6PzCZnEsSIrrlumTXaYEH1Xi28@dpg-citjerp5rnuhcnp6cbk0-a/mancoco'
 app.config['SECRET_KEY'] = '123456789'  # Add this line
 '''
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
