@@ -2,8 +2,7 @@ services:
   - type: web
     name: my-flask-app
     env: python
-    buildCommand: 
-      - flask db upgrade
+    buildCommand: flask db upgrade
     startCommand: gunicorn app:app
     envVars:
       - key: FLASK_APP
