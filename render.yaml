@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: my-flask-app
+    env: python
+    buildCommand: 
+      - pip install -r requirements2.txt
+      - flask db upgrade
+    startCommand: gunicorn app:app
+    envVars:
+      - key: FLASK_APP
+        value: app.py
+
+      - key: FLASK_ENV
+        value: production
+
+      - key: FLASK_DEBUG
+        value: 0
+        
+      - key: SECRET_KEY
+        value: 123456789
+
+      - key: SQLALCHEMY_DATABASE_URI 
+        value: postgres://mancoco_user:54Eufi6PzCZnEsSIrrlumTXaYEH1Xi28@dpg-citjerp5rnuhcnp6cbk0-a/mancoco

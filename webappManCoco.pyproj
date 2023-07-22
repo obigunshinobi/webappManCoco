@@ -38,6 +38,7 @@
   <ItemGroup>
     <Content Include="old\login.html" />
     <Content Include="old\register.html" />
+    <Content Include="render.yaml" />
     <Content Include="static\imgs\icons8-facebook-48.png" />
     <Content Include="static\imgs\icons8-google-48.png" />
     <Content Include="static\imgs\mancoco_backtile.svg" />
