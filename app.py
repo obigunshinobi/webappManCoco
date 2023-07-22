@@ -17,11 +17,11 @@ load_dotenv()
 with open('render.yaml') as file:
     config = yaml.full_load(file)
 
+app = Flask(__name__)
+
 app.config.update(config)
 
 print(app.config['SECRET_KEY'])
-
-app = Flask(__name__)
 
 #app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI')
 #app.config['SECRET_KEY'] = '123456789'  # Add this line
