@@ -3,7 +3,6 @@ services:
     name: my-flask-app
     env: python
     buildCommand: 
-      - pip install -r requirements2.txt
       - flask db upgrade
     startCommand: gunicorn app:app
     envVars:
