@@ -9,6 +9,10 @@ from flask_login import UserMixin
 import base64
 import random
 import os
+import yaml
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 
@@ -17,11 +21,15 @@ app = Flask(__name__)
 
 #app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI')
 #app.config['SECRET_KEY'] = '123456789'  # Add this line
+with open('render.yaml') as file:
+    config = yaml.full_load(file)
+
+app.config.update(config)
 
 if os.getenv('FLASK_ENV') == 'production':
    app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI')
 else:
-   app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite://app.db'
+   app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////app.db'
 
 
 db = SQLAlchemy(app)
