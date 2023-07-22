@@ -14,8 +14,14 @@ import os
 
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI')
-app.config['SECRET_KEY'] = '123456789'  # Add this line
+
+#app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI')
+#app.config['SECRET_KEY'] = '123456789'  # Add this line
+
+if os.getenv('FLASK_ENV') == 'production':
+   app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI')
+else:
+   app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite://app.db'
 
 
 db = SQLAlchemy(app)
