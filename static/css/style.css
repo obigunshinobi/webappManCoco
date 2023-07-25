@@ -505,3 +505,109 @@ form p {
 }
 
 /* media queries */
+
+@media screen and (max-width: 391px) {
+    .logo {
+        left: 15%;
+        width: 250px;
+    }
+
+    .stamp img {
+        width: 100px;
+        height: 250px;
+        top: 48%;
+    }
+
+    .border {
+        width: 250px;
+        height: 150px;
+        left: 15%;
+    }
+
+    .card {
+        width: 200px;
+        height: 100px;
+        left: 9%;
+        top: -17%;
+    }
+
+    .stamp h2 {
+        font-size: 1rem;
+        top: 90%;
+    }
+
+    .card h5 {
+        top: 60%;
+    }
+
+    .circle {
+        width: 20px;
+        height: 20px;
+    }
+
+    .msg {
+        font-size: 0.6rem;
+        top: 100%;
+        left: 0%;
+    }
+
+    .qr {
+        font-size: 0.8rem;
+        top: 120%;
+        left: 30%;
+    }
+
+    #free {
+        font-size: 0.4rem;
+    }
+
+    #s1 img, #s2 img, #s3 img, #s4 img, #s5 img, #s6 img, #s7 img, #s8 img, #s9 img {
+        height: 16px;
+        width: 16px;
+    }
+
+    #s1 img {
+        left: 14%;
+        top: 15%;
+    }
+
+    #s2 img {
+        left: 30%;
+        top: 15%;
+    }
+
+    #s3 img {
+        left: 46%;
+        top: 15%;
+    }
+
+    #s4 img {
+        left: 62%;
+        top: 15%;
+    }
+
+    #s5 img {
+        left: 78%;
+        top: 15%;
+    }
+
+    #s6 img {
+        left: 14%;
+        top: 65%;
+    }
+
+    #s7 img {
+        left: 30%;
+        top: 65%;
+    }
+
+    #s8 img {
+        left: 46%;
+        top: 65%;
+    }
+
+    #s09 img {
+        left: 62%;
+        top: 65%;
+    }
+}
